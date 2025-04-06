@@ -1,8 +1,12 @@
 <?php
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
 // /includes/interfaces/DatabaseInterface.php
 
 interface DatabaseInterface {
     public function get_table_name(): string;
+    public function create_table(): void;
     public function find(int $id): ?object;
     public function get_all(array $args = []): array;
     public function save(array $data): int;

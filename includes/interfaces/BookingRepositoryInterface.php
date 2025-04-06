@@ -1,4 +1,7 @@
 <?php
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
 interface BookingRepositoryInterface {
     public function find(int $id): ?object;
     public function get_all(array $args = []): array;

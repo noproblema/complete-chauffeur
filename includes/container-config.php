@@ -64,4 +64,9 @@ return function (Chauffeur_DIContainer $container) {
             $c->get('VehiclesAdminInterface')
         );
     });
+
+    // Database schema
+    $container->set('Chauffeur_DB_Schema', function() {
+        return new Chauffeur_DB_Schema();
+    });
 };

@@ -1,4 +1,7 @@
 <?php
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
 interface VehicleRepositoryInterface {
     public function find(int $id): ?object;
     public function get_by_class(string $class): ?object;

@@ -41,7 +41,7 @@ class Chauffeur_Form_Handler implements FormHandlerInterface {
     }
 
     private function init_hooks(): void {
-        add_action('init', [$this, 'maybe_handle_submission']);
+        add_action('init', [$this, 'handle_submission']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
         add_action('wp_ajax_chauffeur_submit_booking', [$this, 'handle_ajax_submission']);
         add_action('wp_ajax_nopriv_chauffeur_submit_booking', [$this, 'handle_ajax_submission']);
@@ -75,12 +75,6 @@ class Chauffeur_Form_Handler implements FormHandlerInterface {
         return ob_get_clean();
     }
 
-    public function maybe_handle_submission(): void {
-        if ($this->is_form_submitted()) {
-            $this->handle_submission();
-        }
-    }
-
     private function is_form_submitted(): bool {
         return isset($_POST['chbo_submit']) && 
                wp_verify_nonce($_POST['chauffeur_booking_nonce'], 'chauffeur_booking_form');
@@ -104,7 +98,8 @@ class Chauffeur_Form_Handler implements FormHandlerInterface {
         }
     }
 
-    private function handle_submission(): void {
+    public function handle_submission(): void {
+        $this->is_form_submitted() || exit ;
         $this->submitted_data = $this->sanitize_input($_POST);
 
         try {
