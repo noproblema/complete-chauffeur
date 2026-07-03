@@ -2,18 +2,46 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-// /admin/class-bookings-admin.php
 
-class Chauffeur_Bookings_Admin implements BookingsAdminInterface {
+/**
+ * Admin interface for managing bookings
+ *
+ * Handles:
+ * - Booking list table display
+ * - Booking creation/editing
+ * - Booking status management
+ * - Booking exports
+ */
+class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
+    /**
+     * @var Booking_Repository_Interface $repository Booking repository instance
+     */
     private $repository;
+
+    /**
+     * @var array $notices Admin notices to display
+     */
     private $notices = [];
 
-    public function __construct(BookingRepositoryInterface $repository) {
+    /**
+     * Constructor
+     *
+     * @param Booking_Repository_Interface $repository Booking repository instance
+     */
+    public function __construct(Booking_Repository_Interface $repository) {
         $this->repository = $repository;
         add_action('admin_init', [$this, 'handle_form_submission']);
+        add_action('admin_notices', [$this, 'admin_notices']);
     }
 
-    // Interface Method: render_page()
+    /**
+     * Render the bookings admin page
+     *
+     * Displays different views based on action:
+     * - List view (default)
+     * - Edit view
+     * - Add new view
+     */
     public function render_page(): void {
         $action = $_GET['action'] ?? '';
         $id = $_GET['id'] ?? 0;
@@ -30,7 +58,45 @@ class Chauffeur_Bookings_Admin implements BookingsAdminInterface {
         }
     }
 
-    // Interface Method: render_calendar()
+    /**
+     * Handle booking form submissions (create/update)
+     */
+    public function handle_form_submission(): void {
+        if (!isset($_POST['booking_nonce'])) return;
+        
+        check_admin_referer('booking_action', 'booking_nonce');
+
+        try {
+            $data = $this->sanitize_booking_data($_POST);
+            
+            if (!empty($_POST['booking_id'])) {
+                $this->repository->update(absint($_POST['booking_id']), $data);
+                $this->add_notice(__('Booking updated successfully!', 'chauffeur-booking'));
+            } else {
+                $this->repository->save($data);
+                $this->add_notice(__('Booking created successfully!', 'chauffeur-booking'));
+            }
+        } catch (Exception $e) {
+            $this->add_notice($e->getMessage(), 'error');
+        }
+    }
+
+    /**
+     * Display admin notices
+     */
+    public function admin_notices() {
+        foreach ($this->notices as $notice) {
+            printf(
+                '<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
+                esc_attr($notice['type']),
+                esc_html($notice['message'])
+            );
+        }
+    }
+
+    /**
+     * Render the bookings calendar view
+     */
     public function render_calendar(): void {
         wp_enqueue_script('tui-calendar');
         wp_enqueue_style('tui-calendar-css');
@@ -44,7 +110,12 @@ class Chauffeur_Bookings_Admin implements BookingsAdminInterface {
         include CHAUFFEUR_BOOKING_PATH . 'admin/views/bookings/calendar.php';
     }
 
-    // Interface Method: delete()
+    /**
+     * Delete a booking
+     *
+     * @param int $id Booking ID to delete
+     * @return bool True on success
+     */
     public function delete(int $id): bool {
         check_admin_referer('delete_booking_' . $id);
         
@@ -61,7 +132,11 @@ class Chauffeur_Bookings_Admin implements BookingsAdminInterface {
         }
     }
 
-    // Interface Method: export_bookings()
+    /**
+     * Export bookings to CSV
+     *
+     * @param array $ids Booking IDs to export
+     */
     public function export_bookings(array $ids): void {
         check_admin_referer('bulk-export');
         
@@ -95,27 +170,6 @@ class Chauffeur_Bookings_Admin implements BookingsAdminInterface {
         exit;
     }
 
-    // Interface Method: handle_form_submission()
-    public function handle_form_submission(): void {
-        if (!isset($_POST['booking_nonce'])) return;
-        
-        check_admin_referer('booking_action', 'booking_nonce');
-
-        try {
-            $data = $this->sanitize_booking_data($_POST);
-            
-            if (!empty($_POST['booking_id'])) {
-                $this->repository->update(absint($_POST['booking_id']), $data);
-                $this->add_notice(__('Booking updated successfully!', 'chauffeur-booking'));
-            } else {
-                $this->repository->save($data);
-                $this->add_notice(__('Booking created successfully!', 'chauffeur-booking'));
-            }
-        } catch (Exception $e) {
-            $this->add_notice($e->getMessage(), 'error');
-        }
-    }
-
     // Private helper methods
     private function render_edit_form(int $id): void {
         $booking = $this->repository->find($id);
@@ -132,9 +186,7 @@ class Chauffeur_Bookings_Admin implements BookingsAdminInterface {
 
     private function render_list_table(): void {
         $bookings_table = new Chauffeur_Bookings_List_Table($this->repository);
-        $bookings_table->prepare_items();
-        
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/bookings/list.php';
+        $bookings_table->render();
     }
 
     private function sanitize_booking_data(array $data): array {
@@ -193,3 +245,5 @@ class Chauffeur_Bookings_Admin implements BookingsAdminInterface {
         }
     }
 }
+
+

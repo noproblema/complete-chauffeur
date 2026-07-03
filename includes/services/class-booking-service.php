@@ -8,31 +8,31 @@ if (!defined('ABSPATH')) {
  * 
  * @package ChauffeurBooking
  */
-class Chauffeur_Booking_Service implements BookingServiceInterface {
-    /** @var BookingRepositoryInterface $booking_repo */
-    private $booking_repo;
+class Chauffeur_Booking_Service implements Booking_Service_Interface {
+    /** @var Booking_Repository_Interface $booking_repository */
+    private $booking_repository;
     
-    /** @var RouteRepositoryInterface $route_repo */
-    private $route_repo;
+    /** @var Route_Repository_Interface $route_repository */
+    private $route_repository;
     
-    /** @var VehicleRepositoryInterface $vehicle_repo */
-    private $vehicle_repo;
+    /** @var Vehicle_Repository_Interface $vehicle_repository */
+    private $vehicle_repository;
 
     /**
      * Constructor
      *
-     * @param BookingRepositoryInterface $booking_repo
-     * @param RouteRepositoryInterface $route_repo
-     * @param VehicleRepositoryInterface $vehicle_repo
+     * @param Booking_Repository_Interface $booking_repository
+     * @param Route_Repository_Interface $route_repository
+     * @param Vehicle_Repository_Interface $vehicle_repository
      */
     public function __construct(
-        BookingRepositoryInterface $booking_repo,
-        RouteRepositoryInterface $route_repo,
-        VehicleRepositoryInterface $vehicle_repo
+        Booking_Repository_Interface $booking_repository,
+        Route_Repository_Interface $route_repository,
+        Vehicle_Repository_Interface $vehicle_repository
     ) {
-        $this->booking_repo = $booking_repo;
-        $this->route_repo = $route_repo;
-        $this->vehicle_repo = $vehicle_repo;
+        $this->booking_repository = $booking_repository;
+        $this->route_repository = $route_repository;
+        $this->vehicle_repository = $vehicle_repository;
     }
 
     /**
@@ -55,7 +55,7 @@ class Chauffeur_Booking_Service implements BookingServiceInterface {
         $data['status'] = 'pending';
         $data['created_at'] = current_time('mysql');
         $data['price'] = $this->calculate_price($data);
-        return $this->booking_repo->save($data);
+        return $this->booking_repository->save($data);
     }
 
     /**
@@ -71,7 +71,7 @@ class Chauffeur_Booking_Service implements BookingServiceInterface {
         if (isset($data['route_id'])) {
             $data['price'] = $this->calculate_price($data);
         }
-        return $this->booking_repo->update($id, $data);
+        return $this->booking_repository->update($id, $data);
     }
 
     /**
@@ -81,7 +81,7 @@ class Chauffeur_Booking_Service implements BookingServiceInterface {
      * @return object|null Booking object or null if not found
      */
     public function get_booking(int $id): ?object {
-        return $this->booking_repo->find($id);
+        return $this->booking_repository->find($id);
     }
 
     /**
@@ -93,7 +93,7 @@ class Chauffeur_Booking_Service implements BookingServiceInterface {
     public function get_upcoming_bookings(int $days = 7): array {
         $start_date = current_time('mysql');
         $end_date = date('Y-m-d H:i:s', strtotime("+$days days"));
-        return $this->booking_repo->get_by_date_range($start_date, $end_date);
+        return $this->booking_repository->get_by_date_range($start_date, $end_date);
     }
 
     /**
@@ -104,8 +104,8 @@ class Chauffeur_Booking_Service implements BookingServiceInterface {
      * @throws RuntimeException If route or vehicle not found
      */
     public function calculate_price(array $booking_data): float {
-        $route = $this->route_repo->find($booking_data['route_id']);
-        $vehicle = $this->vehicle_repo->get_by_class($booking_data['vehicle']);
+        $route = $this->route_repository->find($booking_data['route_id']);
+        $vehicle = $this->vehicle_repository->get_by_class($booking_data['vehicle']);
 
         if (!$route || !$vehicle) {
             throw new RuntimeException('Invalid route or vehicle');
@@ -141,3 +141,5 @@ class Chauffeur_Booking_Service implements BookingServiceInterface {
         }
     }
 }
+
+

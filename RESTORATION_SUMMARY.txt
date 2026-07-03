@@ -1,0 +1,52 @@
+Chauffeur Booking Plugin - Restoration Summary
+==============================================
+
+This directory contains the restored files from the concatenated plugin source.
+
+Directory Structure:
+-------------------
+├── chauffeur-booking.php          # Main plugin file
+├── admin/                         # Admin area files
+│   ├── assets/                    # Admin assets (CSS, JS)
+│   │   ├── css/
+│   │   └── js/
+│   ├── views/                     # Admin view templates
+│   │   ├── bookings/
+│   │   ├── routes/
+│   │   └── vehicles/
+│   ├── class-admin-menu.php
+│   ├── class-bookings-admin.php
+│   ├── class-bookings-list-table.php
+│   ├── class-routes-admin.php
+│   ├── class-routes-list-table.php
+│   ├── class-vehicles-admin.php
+│   └── class-vehicles-list-table.php
+├── assets/                        # Frontend assets
+│   ├── css/
+│   ├── js/
+│   └── templates/
+├── includes/                      # Core includes
+│   ├── database/                  # Database layer
+│   ├── repositories/              # Repository layer
+│   ├── services/                  # Service layer
+│   ├── interfaces/                # Interface definitions
+│   ├── class-container.php
+│   ├── class-db-schema.php
+│   ├── class-form-handler.php
+│   ├── class-autoloader.php
+│   ├── class-autoloader-debug.php
+│   ├── class-public-shortcode.php
+│   └── container-config.php
+└── languages/                     # Translation files
+
+Key Features:
+------------
+- Dependency Injection Container for service management
+- Repository pattern for data access
+- Service layer for business logic
+- WP_List_Table implementations for admin tables
+- Calendar view with TUI Calendar
+- AJAX form submissions
+- Full CRUD operations for bookings, routes, and vehicles
+
+Restoration Date: /home/joma/temp/kk

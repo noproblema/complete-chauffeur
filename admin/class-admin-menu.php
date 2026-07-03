@@ -8,9 +8,9 @@ class Chauffeur_Admin_Menu {
     private $vehicles_admin;
 
     public function __construct(
-        BookingsAdminInterface $bookings_admin,
-        RoutesAdminInterface $routes_admin,
-        VehiclesAdminInterface $vehicles_admin
+        Bookings_Admin_Interface $bookings_admin,
+        Routes_Admin_Interface $routes_admin,
+        Vehicles_Admin_Interface $vehicles_admin
     ) {
         $this->bookings_admin = $bookings_admin;
         $this->routes_admin = $routes_admin;
@@ -97,3 +97,5 @@ class Chauffeur_Admin_Menu {
         }
     }
 }
+
+

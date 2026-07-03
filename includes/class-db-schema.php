@@ -4,139 +4,70 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Handles database schema creation and updates
- * 
- * @package ChauffeurBooking
+ * Handles database schema creation and version management
+ *
+ * Responsible for:
+ * - Creating database tables on plugin activation
+ * - Managing database versioning
+ * - Coordinating table creation across repositories
  */
-class Chauffeur_DB_Schema {
-    /** @var wpdb $wpdb WordPress database abstraction */
-    private $wpdb;
+class Chauffeur_Db_Schema {
+    /**
+     * @var Database_Interface $bookings_db Bookings database handler
+     */
+    private $bookings_db;
 
-    /** @var string $charset_collate Database charset */
-    private $charset_collate;
+    /**
+     * @var Database_Interface $routes_db Routes database handler
+     */
+    private $routes_db;
 
-    /** @var float $current_version Current database version */
+    /**
+     * @var Database_Interface $vehicles_db Vehicles database handler
+     */
+    private $vehicles_db;
+
+    /**
+     * @var float $current_version Current database schema version
+     */
     private $current_version = 1.0;
 
     /**
      * Constructor
+     *
+     * @param Database_Interface $bookings_db Bookings database handler
+     * @param Database_Interface $routes_db Routes database handler
+     * @param Database_Interface $vehicles_db Vehicles database handler
      */
-    public function __construct() {
-        global $wpdb;
-        $this->wpdb = $wpdb;
-        $this->charset_collate = $wpdb->get_charset_collate();
+    public function __construct(
+        Database_Interface $bookings_db,
+        Database_Interface $routes_db,
+        Database_Interface $vehicles_db
+    ) {
+        $this->bookings_db = $bookings_db;
+        $this->routes_db = $routes_db;
+        $this->vehicles_db = $vehicles_db;
     }
 
     /**
-     * Create database tables on plugin activation
+     * Create all database tables on plugin activation
      */
     public function activate(): void {
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-        $this->create_bookings_table();
-        $this->create_routes_table();
-        $this->create_vehicles_table();
-
+        $this->bookings_db->create_table();
+        $this->routes_db->create_table();
+        $this->vehicles_db->create_table();
         add_option('chauffeur_booking_db_version', $this->current_version);
     }
 
     /**
-     * Remove database tables on plugin deactivation (optional)
+     * Plugin deactivation handler (tables are preserved)
      */
     public function deactivate(): void {
-        // Typically you wouldn't delete tables on deactivation
-        // But here's how you could if needed:
-        /*
-        $this->wpdb->query("DROP TABLE IF EXISTS {$this->wpdb->prefix}chauffeur_bookings");
-        $this->wpdb->query("DROP TABLE IF EXISTS {$this->wpdb->prefix}chauffeur_routes");
-        $this->wpdb->query("DROP TABLE IF EXISTS {$this->wpdb->prefix}chauffeur_vehicles");
-        delete_option('chauffeur_booking_db_version');
-        */
+        // Typically leave tables intact on deactivation
     }
 
     /**
-     * Create bookings table
-     */
-    private function create_bookings_table(): void {
-        $table_name = $this->wpdb->prefix . 'chauffeur_bookings';
-
-        $sql = "CREATE TABLE $table_name (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            name varchar(100) NOT NULL,
-            email varchar(100) NOT NULL,
-            phone varchar(30) NOT NULL,
-            vehicle varchar(50) NOT NULL,
-            route_id bigint(20) NOT NULL,
-            pickup_date datetime NOT NULL,
-            pickup_location varchar(255) NOT NULL,
-            destination varchar(255) NOT NULL,
-            distance decimal(10,2) NOT NULL,
-            price decimal(10,2) NOT NULL,
-            roundtrip tinyint(1) DEFAULT 0 NOT NULL,
-            notes text DEFAULT NULL,
-            status varchar(20) DEFAULT 'pending' NOT NULL,
-            created_at datetime NOT NULL,
-            updated_at datetime NOT NULL,
-            PRIMARY KEY  (id),
-            KEY route_id (route_id),
-            KEY pickup_date (pickup_date),
-            KEY status (status)
-        ) {$this->charset_collate};";
-
-        dbDelta($sql);
-    }
-
-    /**
-     * Create routes table
-     */
-    private function create_routes_table(): void {
-        $table_name = $this->wpdb->prefix . 'chauffeur_routes';
-
-        $sql = "CREATE TABLE $table_name (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            route_name varchar(100) NOT NULL,
-            start_location varchar(255) NOT NULL,
-            end_location varchar(255) NOT NULL,
-            distance decimal(10,2) NOT NULL,
-            price decimal(10,2) NOT NULL,
-            roundtrip_price decimal(10,2) NOT NULL,
-            is_active tinyint(1) DEFAULT 1 NOT NULL,
-            created_at datetime NOT NULL,
-            updated_at datetime NOT NULL,
-            PRIMARY KEY  (id),
-            KEY is_active (is_active)
-        ) {$this->charset_collate};";
-
-        dbDelta($sql);
-    }
-
-    /**
-     * Create vehicles table
-     */
-    private function create_vehicles_table(): void {
-        $table_name = $this->wpdb->prefix . 'chauffeur_vehicles';
-
-        $sql = "CREATE TABLE $table_name (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            class varchar(50) NOT NULL,
-            name varchar(100) NOT NULL,
-            description text DEFAULT NULL,
-            capacity int(11) NOT NULL,
-            price_rate decimal(5,2) NOT NULL COMMENT 'Percentage rate to apply to base price',
-            image_url varchar(255) DEFAULT NULL,
-            is_available tinyint(1) DEFAULT 1 NOT NULL,
-            created_at datetime NOT NULL,
-            updated_at datetime NOT NULL,
-            PRIMARY KEY  (id),
-            UNIQUE KEY class (class),
-            KEY is_available (is_available)
-        ) {$this->charset_collate};";
-
-        dbDelta($sql);
-    }
-
-    /**
-     * Update database schema if needed
+     * Check and update database schema if needed
      */
     public function update_db_if_needed(): void {
         $installed_version = get_option('chauffeur_booking_db_version', 0);
@@ -146,3 +77,5 @@ class Chauffeur_DB_Schema {
         }
     }
 }
+
+

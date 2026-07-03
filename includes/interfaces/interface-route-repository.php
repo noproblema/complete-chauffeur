@@ -2,14 +2,13 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-// /includes/interfaces/DatabaseInterface.php
-
-interface DatabaseInterface {
-    public function get_table_name(): string;
-    public function create_table(): void;
+interface Route_Repository_Interface {
     public function find(int $id): ?object;
-    public function get_all(array $args = []): array;
+    public function get_all(): array;
+    public function get_by_name(string $name): ?object;
     public function save(array $data): int;
     public function update(int $id, array $data): bool;
     public function delete(int $id): bool;
 }
+
+

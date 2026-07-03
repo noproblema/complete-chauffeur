@@ -179,27 +179,4 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* /assets/css/frontend.css */
-.chauffeur-booking-form-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
 
-.form-section {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-}
-
-.route-selection .input-group {
-    margin-bottom: 1rem;
-}
-
-#chauffeur-loading {
-    text-align: center;
-    padding: 2rem;
-}

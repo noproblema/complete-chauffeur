@@ -7,7 +7,7 @@ jQuery(document).ready(function ($) {
     const roundtripCheckbox = $('#chbo_roundtrip');
     const reverseButton = $('#reverse-route-button');
     const testButton = $('#test-button');
-
+debugger;
     // Function to calculate the final price
     function updatePrice() {
         const selectedRoute = routeSelect.find(':selected');
@@ -143,6 +143,7 @@ jQuery(document).ready(function ($) {
 
     // Initialize Flatpickr for the pickup date and time field
     if ($('#chbo_pickup_date').length) {
+        debugger;
         $('#chbo_pickup_date').flatpickr({
             enableTime: true, // Enable time selection
             dateFormat: 'Y-m-d H:i', // Date and time format
@@ -150,7 +151,9 @@ jQuery(document).ready(function ($) {
             time_24hr: true, // Use 24-hour format
             onChange: function (selectedDates, dateStr, instance) {
                 console.log('Selected Date & Time:', dateStr);
-            },
+            }
         });
     }
 });
+
+
