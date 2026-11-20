@@ -7,12 +7,12 @@ if (!defined('ABSPATH')) {
 /**
  * Handles form submissions and rendering for the booking form
  */
-class Chauffeur_Form_Handler implements Form_Handler_Interface {
+class Complete_Chauffeur_Form_Handler implements Form_Handler_Interface {
     private $booking_service;    // Service for booking operations
     private $route_repository;   // Repository for route data
     private $vehicle_repository; // Repository for vehicle data
     private $submitted_data = []; // Stores submitted form data
-    private $transient_key = 'chauffeur_booking_notice'; // Key for temporary notices
+    private $transient_key = 'complete_chauffeur_booking_notice'; // Key for temporary notices
 
 
     /**
@@ -48,7 +48,7 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
         // Make routes and vehicles available to template
         $routes = $this->get_routes();
         $vehicles = $this->get_vehicles();
-        include CHAUFFEUR_BOOKING_PATH . 'assets/templates/booking-form.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'assets/templates/booking-form.php';
         
         // Return the buffered content
         return ob_get_clean();
@@ -83,7 +83,7 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
      */
     public function handle_ajax_submission(): void {
         // Verify nonce for AJAX request
-        check_ajax_referer('chauffeur_booking_nonce', 'nonce');
+        check_ajax_referer('complete_chauffeur_booking_nonce', 'nonce');
 
         try {
             // Sanitize input data
@@ -94,7 +94,7 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
             
             // Return success response
             wp_send_json_success([
-                'message' => __('Booking successful!', 'chauffeur-booking'),
+                'message' => __('Booking successful!', 'complete-chauffeur'),
                 'booking_id' => $booking_id
             ]);
             
@@ -112,41 +112,41 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
     public function enqueue_assets(): void {
         // Enqueue CSS
         wp_enqueue_style(
-            'chauffeur-booking-form',
-            CHAUFFEUR_BOOKING_URL . 'assets/css/frontend.css',
+            'complete-chauffeur-form',
+            COMPLETE_CHAUFFEUR_URL . 'assets/css/frontend.css',
             [],
-            CHAUFFEUR_BOOKING_VERSION
+            COMPLETE_CHAUFFEUR_VERSION
         );
 
         // Enqueue JavaScript
         wp_enqueue_script(
-            'chauffeur-booking-form',
-            CHAUFFEUR_BOOKING_URL . 'assets/js/frontend.js',
+            'complete-chauffeur-form',
+            COMPLETE_CHAUFFEUR_URL . 'assets/js/frontend.js',
             ['jquery', 'flatpickr-js'],
-            CHAUFFEUR_BOOKING_VERSION,
+            COMPLETE_CHAUFFEUR_VERSION,
             true
         );
 
         // Enqueue Flatpickr CSS and JS for the frontend
         wp_enqueue_style(
             'flatpickr-css',
-            CHAUFFEUR_BOOKING_URL . 'assets/css/flatpickr.min.css',
+            COMPLETE_CHAUFFEUR_URL . 'assets/css/flatpickr.min.css',
             [],
             '4.6.9'
         );
 
         wp_enqueue_script(
             'flatpickr-js',
-            CHAUFFEUR_BOOKING_URL . 'assets/js/flatpickr.min.js',
+            COMPLETE_CHAUFFEUR_URL . 'assets/js/flatpickr.min.js',
             ['jquery'], // Dependencies (jQuery)
             '4.6.9',
             true
         );
 
         // Localize script for AJAX
-        wp_localize_script('chauffeur-booking-form', 'chauffeurBooking', [
+        wp_localize_script('complete-chauffeur-form', 'chauffeurBooking', [
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('chauffeur_booking_nonce')
+            'nonce' => wp_create_nonce('complete_chauffeur_booking_nonce')
         ]);
     }
 
@@ -162,8 +162,8 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
         
         // Handle AJAX submissions
-        add_action('wp_ajax_chauffeur_submit_booking', [$this, 'handle_ajax_submission']);
-        add_action('wp_ajax_nopriv_chauffeur_submit_booking', [$this, 'handle_ajax_submission']);
+        add_action('wp_ajax_complete_chauffeur_submit_booking', [$this, 'handle_ajax_submission']);
+        add_action('wp_ajax_nopriv_complete_chauffeur_submit_booking', [$this, 'handle_ajax_submission']);
     }
 
     /**
@@ -183,7 +183,7 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
             $booking_id = $this->booking_service->create_booking($this->submitted_data);
             
             // Set success notice
-            $this->set_notice(__('Booking created successfully!', 'chauffeur-booking'));
+            $this->set_notice(__('Booking created successfully!', 'complete-chauffeur'));
             
         } catch (Exception $e) {
             // Set error notice if something goes wrong
@@ -198,7 +198,7 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
      */
     private function is_form_submitted(): bool {
         return isset($_POST['chbo_submit']) && 
-               wp_verify_nonce($_POST['chauffeur_booking_nonce'], 'chauffeur_booking_form');
+               wp_verify_nonce($_POST['complete_chauffeur_booking_nonce'], 'complete_chauffeur_booking_form');
     }
 
     /**
@@ -255,5 +255,7 @@ class Chauffeur_Form_Handler implements Form_Handler_Interface {
         return $this->vehicle_repository->get_all();
     }
 }
+
+
 
 

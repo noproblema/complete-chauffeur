@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 /**
  * Bookings database operations
  */
-class Chauffeur_Bookings_Database extends Chauffeur_Base_Database {
+class Complete_Chauffeur_Bookings_Database extends Complete_Chauffeur_Base_Database {
     protected function get_table_prefix(): string {
-        return 'chauffeur_bookings';
+        return 'complete_chauffeur_bookings';
     }
 
     protected function get_table_schema(): string {
@@ -93,5 +93,7 @@ class Chauffeur_Bookings_Database extends Chauffeur_Base_Database {
         }
     }
 }
+
+
 
 

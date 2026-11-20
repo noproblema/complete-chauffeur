@@ -11,18 +11,18 @@ if (!defined('ABSPATH')) {
  * - Route-specific queries
  * - Data access abstraction
  */
-class Chauffeur_Route_Repository implements Route_Repository_Interface {
+class Complete_Chauffeur_Route_Repository implements Route_Repository_Interface {
     /**
-     * @var Chauffeur_Routes_Database $database Reference to the database handler
+     * @var Complete_Chauffeur_Routes_Database $database Reference to the database handler
      */
     private $database;
 
     /**
      * Constructor - Initializes with database dependency
      * 
-     * @param Chauffeur_Routes_Database $database The routes database handler
+     * @param Complete_Chauffeur_Routes_Database $database The routes database handler
      */
-    public function __construct(Chauffeur_Routes_Database $database) {
+    public function __construct(Complete_Chauffeur_Routes_Database $database) {
         $this->database = $database;
     }
 
@@ -108,5 +108,7 @@ class Chauffeur_Route_Repository implements Route_Repository_Interface {
         return $this->database->get_all($filters);
     }
 }
+
+
 
 

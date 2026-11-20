@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class Chauffeur_Routes_Admin implements Routes_Admin_Interface {
+class Complete_Chauffeur_Routes_Admin implements Routes_Admin_Interface {
     private $repository;
     private $notices = [];
 
@@ -29,19 +29,19 @@ class Chauffeur_Routes_Admin implements Routes_Admin_Interface {
     }
 
     public function handle_form_submission(): void {
-        if (!isset($_POST['route_nonce'])) return;
+        if (!isset($_POST['complete_chauffeur_route_nonce'])) return;
         
-        check_admin_referer('route_action', 'route_nonce');
+        check_admin_referer('route_action', 'complete_chauffeur_route_nonce');
 
         try {
             $data = $this->sanitize_route_data($_POST);
             
             if (!empty($_POST['route_id'])) {
                 $this->repository->update(absint($_POST['route_id']), $data);
-                $this->add_notice(__('Route updated successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Route updated successfully!', 'complete-chauffeur'));
             } else {
                 $this->repository->save($data);
-                $this->add_notice(__('Route created successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Route created successfully!', 'complete-chauffeur'));
             }
         } catch (Exception $e) {
             $this->add_notice($e->getMessage(), 'error');
@@ -54,10 +54,10 @@ class Chauffeur_Routes_Admin implements Routes_Admin_Interface {
         try {
             $result = $this->repository->delete($id);
             if ($result) {
-                $this->add_notice(__('Route deleted successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Route deleted successfully!', 'complete-chauffeur'));
                 return true;
             }
-            throw new RuntimeException(__('Failed to delete route', 'chauffeur-booking'));
+            throw new RuntimeException(__('Failed to delete route', 'complete-chauffeur'));
         } catch (Exception $e) {
             $this->add_notice($e->getMessage(), 'error');
             return false;
@@ -72,11 +72,11 @@ class Chauffeur_Routes_Admin implements Routes_Admin_Interface {
         
         $output = fopen('php://output', 'w');
         fputcsv($output, [
-            __('ID', 'chauffeur-booking'),
-            __('Route Name', 'chauffeur-booking'),
-            __('Start Location', 'chauffeur-booking'),
-            __('End Location', 'chauffeur-booking'),
-            __('Distance', 'chauffeur-booking')
+            __('ID', 'complete-chauffeur'),
+            __('Route Name', 'complete-chauffeur'),
+            __('Start Location', 'complete-chauffeur'),
+            __('End Location', 'complete-chauffeur'),
+            __('Distance', 'complete-chauffeur')
         ]);
         
         foreach ($ids as $id) {
@@ -104,18 +104,18 @@ class Chauffeur_Routes_Admin implements Routes_Admin_Interface {
     private function render_edit_form(int $id): void {
         $route = $this->repository->find($id);
         if (!$route) {
-            wp_die(__('Route not found', 'chauffeur-booking'));
+            wp_die(__('Route not found', 'complete-chauffeur'));
         }
 
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/routes/edit.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/routes/edit.php';
     }
 
     private function render_add_form(): void {
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/routes/add.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/routes/add.php';
     }
 
     private function render_list_table(): void {
-        $routes_table = new Chauffeur_Routes_List_Table($this->repository);
+        $routes_table = new Complete_Chauffeur_Routes_List_Table($this->repository);
         $routes_table->render();
     }
 
@@ -138,7 +138,7 @@ class Chauffeur_Routes_Admin implements Routes_Admin_Interface {
         ];
         
         set_transient(
-            'chauffeur_routes_admin_notice_' . get_current_user_id(),
+            'complete_chauffeur_routes_admin_notice_' . get_current_user_id(),
             ['message' => $message, 'type' => $type],
             45
         );
@@ -153,15 +153,17 @@ class Chauffeur_Routes_Admin implements Routes_Admin_Interface {
             );
         }
         
-        if ($notice = get_transient('chauffeur_routes_admin_notice_' . get_current_user_id())) {
+        if ($notice = get_transient('complete_chauffeur_routes_admin_notice_' . get_current_user_id())) {
             printf(
                 '<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
                 esc_attr($notice['type']),
                 esc_html($notice['message'])
             );
-            delete_transient('chauffeur_routes_admin_notice_' . get_current_user_id());
+            delete_transient('complete_chauffeur_routes_admin_notice_' . get_current_user_id());
         }
     }
 }
+
+
 
 

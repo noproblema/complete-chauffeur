@@ -12,18 +12,18 @@ if (!defined('ABSPATH')) {
  * - Date-based filtering
  * - Status management
  */
-class Chauffeur_Booking_Repository implements Booking_Repository_Interface {
+class Complete_Chauffeur_Booking_Repository implements Booking_Repository_Interface {
     /**
-     * @var Chauffeur_Bookings_Database $database Reference to the bookings database handler
+     * @var Complete_Chauffeur_Bookings_Database $database Reference to the bookings database handler
      */
     private $database;
 
     /**
      * Constructor
      *
-     * @param Chauffeur_Bookings_Database $database The bookings database handler
+     * @param Complete_Chauffeur_Bookings_Database $database The bookings database handler
      */
-    public function __construct(Chauffeur_Bookings_Database $database) {
+    public function __construct(Complete_Chauffeur_Bookings_Database $database) {
         $this->database = $database;
     }
 
@@ -155,5 +155,7 @@ class Chauffeur_Booking_Repository implements Booking_Repository_Interface {
         return $this->database->update($id, ['status' => $status]);
     }
 }
+
+
 
 

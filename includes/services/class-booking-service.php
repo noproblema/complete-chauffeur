@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  * 
  * @package ChauffeurBooking
  */
-class Chauffeur_Booking_Service implements Booking_Service_Interface {
+class Complete_Chauffeur_Booking_Service implements Booking_Service_Interface {
     /** @var Booking_Repository_Interface $booking_repository */
     private $booking_repository;
     
@@ -141,5 +141,7 @@ class Chauffeur_Booking_Service implements Booking_Service_Interface {
         }
     }
 }
+
+
 
 

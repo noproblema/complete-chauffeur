@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
+class Complete_Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
     private $repository;
     private $notices = [];
 
@@ -29,19 +29,19 @@ class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
     }
 
     public function handle_form_submission(): void {
-        if (!isset($_POST['vehicle_nonce'])) return;
+        if (!isset($_POST['complete_chauffeur_vehicle_nonce'])) return;
         
-        check_admin_referer('vehicle_action', 'vehicle_nonce');
+        check_admin_referer('vehicle_action', 'complete_chauffeur_vehicle_nonce');
 
         try {
             $data = $this->sanitize_vehicle_data($_POST);
             
             if (!empty($_POST['vehicle_id'])) {
                 $this->repository->update(absint($_POST['vehicle_id']), $data);
-                $this->add_notice(__('Vehicle updated successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Vehicle updated successfully!', 'complete-chauffeur'));
             } else {
                 $this->repository->save($data);
-                $this->add_notice(__('Vehicle created successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Vehicle created successfully!', 'complete-chauffeur'));
             }
         } catch (Exception $e) {
             $this->add_notice($e->getMessage(), 'error');
@@ -54,10 +54,10 @@ class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
         try {
             $result = $this->repository->delete($id);
             if ($result) {
-                $this->add_notice(__('Vehicle deleted successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Vehicle deleted successfully!', 'complete-chauffeur'));
                 return true;
             }
-            throw new RuntimeException(__('Failed to delete vehicle', 'chauffeur-booking'));
+            throw new RuntimeException(__('Failed to delete vehicle', 'complete-chauffeur'));
         } catch (Exception $e) {
             $this->add_notice($e->getMessage(), 'error');
             return false;
@@ -70,11 +70,11 @@ class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
         try {
             $result = $this->repository->update($id, ['is_available' => $available]);
             if ($result) {
-                $status = $available ? __('available', 'chauffeur-booking') : __('unavailable', 'chauffeur-booking');
-                $this->add_notice(sprintf(__('Vehicle marked as %s', 'chauffeur-booking'), $status));
+                $status = $available ? __('available', 'complete-chauffeur') : __('unavailable', 'complete-chauffeur');
+                $this->add_notice(sprintf(__('Vehicle marked as %s', 'complete-chauffeur'), $status));
                 return true;
             }
-            throw new RuntimeException(__('Failed to update vehicle availability', 'chauffeur-booking'));
+            throw new RuntimeException(__('Failed to update vehicle availability', 'complete-chauffeur'));
         } catch (Exception $e) {
             $this->add_notice($e->getMessage(), 'error');
             return false;
@@ -94,11 +94,11 @@ class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
         
         $output = fopen('php://output', 'w');
         fputcsv($output, [
-            __('ID', 'chauffeur-booking'),
-            __('Class', 'chauffeur-booking'),
-            __('Name', 'chauffeur-booking'),
-            __('Capacity', 'chauffeur-booking'),
-            __('Price Rate', 'chauffeur-booking')
+            __('ID', 'complete-chauffeur'),
+            __('Class', 'complete-chauffeur'),
+            __('Name', 'complete-chauffeur'),
+            __('Capacity', 'complete-chauffeur'),
+            __('Price Rate', 'complete-chauffeur')
         ]);
         
         foreach ($ids as $id) {
@@ -120,18 +120,18 @@ class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
     private function render_edit_form(int $id): void {
         $vehicle = $this->repository->find($id);
         if (!$vehicle) {
-            wp_die(__('Vehicle not found', 'chauffeur-booking'));
+            wp_die(__('Vehicle not found', 'complete-chauffeur'));
         }
 
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/vehicles/edit.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/vehicles/edit.php';
     }
 
     private function render_add_form(): void {
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/vehicles/add.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/vehicles/add.php';
     }
 
     private function render_list_table(): void {
-        $vehicles_table = new Chauffeur_Vehicles_List_Table($this->repository);
+        $vehicles_table = new Complete_Chauffeur_Vehicles_List_Table($this->repository);
         $vehicles_table->render();
     }
 
@@ -153,7 +153,7 @@ class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
         ];
         
         set_transient(
-            'chauffeur_vehicles_admin_notice_' . get_current_user_id(),
+            'complete_chauffeur_vehicles_admin_notice_' . get_current_user_id(),
             ['message' => $message, 'type' => $type],
             45
         );
@@ -168,15 +168,17 @@ class Chauffeur_Vehicles_Admin implements Vehicles_Admin_Interface {
             );
         }
         
-        if ($notice = get_transient('chauffeur_vehicles_admin_notice_' . get_current_user_id())) {
+        if ($notice = get_transient('complete_chauffeur_vehicles_admin_notice_' . get_current_user_id())) {
             printf(
                 '<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
                 esc_attr($notice['type']),
                 esc_html($notice['message'])
             );
-            delete_transient('chauffeur_vehicles_admin_notice_' . get_current_user_id());
+            delete_transient('complete_chauffeur_vehicles_admin_notice_' . get_current_user_id());
         }
     }
 }
+
+
 
 

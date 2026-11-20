@@ -4,11 +4,11 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php esc_html_e('Bookings', 'chauffeur-booking'); ?></h1>
+    <h1 class="wp-heading-inline"><?php esc_html_e('Bookings', 'complete-chauffeur'); ?></h1>
     
-    <a href="<?php echo esc_url(admin_url('admin.php?page=chauffeur-bookings&action=add')); ?>" 
+    <a href="<?php echo esc_url(admin_url('admin.php?page=complete-chauffeurs&action=add')); ?>" 
        class="page-title-action">
-        <?php esc_html_e('Add New', 'chauffeur-booking'); ?>
+        <?php esc_html_e('Add New', 'complete-chauffeur'); ?>
     </a>
     
     <?php 
@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) {
         wp_nonce_field('bulk-' . $this->_args['plural'], '_wpnonce', false); 
         
         // Add search box if needed
-        $this->search_box(__('Search Bookings', 'chauffeur-booking'), 'booking_search');
+        $this->search_box(__('Search Bookings', 'complete-chauffeur'), 'booking_search');
         
         // Display the table
         $this->display(); 
@@ -39,11 +39,11 @@ if (!defined('ABSPATH')) {
         <div class="view-switch">
             <a href="<?php echo esc_url(remove_query_arg('view')); ?>" 
                class="button <?php echo ($current_view !== 'calendar') ? 'button-primary' : ''; ?>">
-                <?php esc_html_e('List View', 'chauffeur-booking'); ?>
+                <?php esc_html_e('List View', 'complete-chauffeur'); ?>
             </a>
             <a href="<?php echo esc_url(add_query_arg('view', 'calendar')); ?>" 
                class="button <?php echo ($current_view === 'calendar') ? 'button-primary' : ''; ?>">
-                <?php esc_html_e('Calendar View', 'chauffeur-booking'); ?>
+                <?php esc_html_e('Calendar View', 'complete-chauffeur'); ?>
             </a>
         </div>
         <?php
@@ -56,7 +56,7 @@ jQuery(document).ready(function($) {
     // Confirm before bulk actions
     $('#doaction, #doaction2').click(function(e) {
         if ($('select[name^="action"]').val() === 'delete') {
-            if (!confirm('<?php esc_attr_e('Are you sure you want to delete these bookings?', 'chauffeur-booking'); ?>')) {
+            if (!confirm('<?php esc_attr_e('Are you sure you want to delete these bookings?', 'complete-chauffeur'); ?>')) {
                 e.preventDefault();
             }
         }
@@ -68,5 +68,7 @@ jQuery(document).ready(function($) {
     });
 });
 </script>
+
+
 
 

@@ -5,12 +5,12 @@ if (!defined('ABSPATH')) {
 ?>
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <?php esc_html_e('Routes', 'chauffeur-booking'); ?>
+        <?php esc_html_e('Routes', 'complete-chauffeur'); ?>
     </h1>
     
-    <a href="<?php echo esc_url(admin_url('admin.php?page=chauffeur-routes&action=add')); ?>" 
+    <a href="<?php echo esc_url(admin_url('admin.php?page=complete-chauffeur-routes&action=add')); ?>" 
        class="page-title-action">
-        <?php esc_html_e('Add New', 'chauffeur-booking'); ?>
+        <?php esc_html_e('Add New', 'complete-chauffeur'); ?>
     </a>
     
     <?php $this->display_notices(); ?>
@@ -21,11 +21,13 @@ if (!defined('ABSPATH')) {
         wp_nonce_field('bulk-' . $this->_args['plural'], '_wpnonce', false); 
         
         // Add search box if needed
-        $this->search_box(__('Search Bookings', 'chauffeur-booking'), 'booking_search');
+        $this->search_box(__('Search Bookings', 'complete-chauffeur'), 'booking_search');
         
         // Display the table
         $this->display(); 
         ?>
 </div>
+
+
 
 

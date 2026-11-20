@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 /**
  * Dependency Injection Container for managing service instantiation and dependencies
  */
-class Chauffeur_Container {
+class Complete_Chauffeur_Container {
     private $definitions = []; // Stores service definitions
     private $instances = [];   // Stores instantiated services for reuse
     
@@ -106,5 +106,7 @@ class Chauffeur_Container {
         return $type->getName();
     }
 }
+
+
 
 

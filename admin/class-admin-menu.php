@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-class Chauffeur_Admin_Menu {
+class Complete_Chauffeur_Admin_Menu {
     private $bookings_admin;
     private $routes_admin;
     private $vehicles_admin;
@@ -23,10 +23,10 @@ class Chauffeur_Admin_Menu {
     public function add_admin_menus() {
         // Main Bookings Menu
         add_menu_page(
-            __('Bookings Calendar', 'chauffeur-booking'),
-            __('Chauffeur Bookings', 'chauffeur-booking'),
-            'manage_chauffeur_bookings',
-            'chauffeur-bookings',
+            __('Bookings Calendar', 'complete-chauffeur'),
+            __('Complete Chauffeur Bookings', 'complete-chauffeur'),
+            'manage_complete_chauffeur_bookings',
+            'complete-chauffeurs',
             [$this, 'render_calendar_page'],
             'dashicons-calendar',
             6
@@ -34,29 +34,29 @@ class Chauffeur_Admin_Menu {
 
         // Submenu Items
         add_submenu_page(
-            'chauffeur-bookings',
-            __('Bookings Table', 'chauffeur-booking'),
-            __('All Bookings', 'chauffeur-booking'),
-            'manage_chauffeur_bookings',
-            'chauffeur-bookings',
+            'complete-chauffeurs',
+            __('Bookings Table', 'complete-chauffeur'),
+            __('All Bookings', 'complete-chauffeur'),
+            'manage_complete_chauffeur_bookings',
+            'complete-chauffeurs',
             [$this->bookings_admin, 'render_page']
         );
 
         add_submenu_page(
-            'chauffeur-bookings',
-            __('Routes Editor', 'chauffeur-booking'),
-            __('Routes', 'chauffeur-booking'),
-            'manage_chauffeur_routes',
-            'chauffeur-routes',
+            'complete-chauffeurs',
+            __('Routes Editor', 'complete-chauffeur'),
+            __('Routes', 'complete-chauffeur'),
+            'manage_complete_chauffeur_routes',
+            'complete-chauffeur-routes',
             [$this->routes_admin, 'render_page']
         );
 
         add_submenu_page(
-            'chauffeur-bookings',
-            __('Manage Vehicles', 'chauffeur-booking'),
-            __('Vehicles', 'chauffeur-booking'),
-            'manage_chauffeur_vehicles',
-            'chauffeur-vehicles',
+            'complete-chauffeurs',
+            __('Manage Vehicles', 'complete-chauffeur'),
+            __('Vehicles', 'complete-chauffeur'),
+            'manage_complete_chauffeur_vehicles',
+            'complete-chauffeur-vehicles',
             [$this->vehicles_admin, 'render_page']
         );
     }
@@ -68,7 +68,7 @@ class Chauffeur_Admin_Menu {
 
     public function handle_global_actions() {
         // Handle bulk actions across admin pages
-        if (isset($_REQUEST['action']) && current_user_can('manage_chauffeur_bookings')) {
+        if (isset($_REQUEST['action']) && current_user_can('manage_complete_chauffeur_bookings')) {
             $this->handle_bulk_actions();
         }
     }
@@ -77,8 +77,8 @@ class Chauffeur_Admin_Menu {
         $action = $_REQUEST['action'];
         $ids = $_REQUEST['ids'] ?? [];
 
-        if (!wp_verify_nonce($_REQUEST['_wpnonce'], 'bulk-bookings')) {
-            wp_die(__('Security check failed', 'chauffeur-booking'));
+        if (!wp_verify_nonce($_REQUEST['_wpnonce'], 'bulk-complete-chauffeurs')) {
+            wp_die(__('Security check failed', 'complete-chauffeur'));
         }
 
         try {
@@ -97,5 +97,7 @@ class Chauffeur_Admin_Menu {
         }
     }
 }
+
+
 
 

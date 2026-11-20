@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 /**
  * Routes database operations
  */
-class Chauffeur_Routes_Database extends Chauffeur_Base_Database {
+class Complete_Chauffeur_Routes_Database extends Complete_Chauffeur_Base_Database {
     protected function get_table_prefix(): string {
-        return 'chauffeur_routes';
+        return 'complete_chauffeur_routes';
     }
 
     protected function get_table_schema(): string {
@@ -77,5 +77,7 @@ class Chauffeur_Routes_Database extends Chauffeur_Base_Database {
         ]);
     }
 }
+
+
 
 

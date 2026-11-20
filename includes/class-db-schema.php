@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * - Managing database versioning
  * - Coordinating table creation across repositories
  */
-class Chauffeur_Db_Schema {
+class Complete_Chauffeur_Db_Schema {
     /**
      * @var Database_Interface $bookings_db Bookings database handler
      */
@@ -56,7 +56,7 @@ class Chauffeur_Db_Schema {
         $this->bookings_db->create_table();
         $this->routes_db->create_table();
         $this->vehicles_db->create_table();
-        add_option('chauffeur_booking_db_version', $this->current_version);
+        add_option('complete_chauffeur_booking_db_version', $this->current_version);
     }
 
     /**
@@ -70,12 +70,14 @@ class Chauffeur_Db_Schema {
      * Check and update database schema if needed
      */
     public function update_db_if_needed(): void {
-        $installed_version = get_option('chauffeur_booking_db_version', 0);
+        $installed_version = get_option('complete_chauffeur_booking_db_version', 0);
 
         if (version_compare($installed_version, $this->current_version, '<')) {
             $this->activate();
         }
     }
 }
+
+
 
 

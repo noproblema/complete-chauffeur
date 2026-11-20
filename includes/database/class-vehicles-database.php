@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 /**
  * Vehicles database operations
  */
-class Chauffeur_Vehicles_Database extends Chauffeur_Base_Database {
+class Complete_Chauffeur_Vehicles_Database extends Complete_Chauffeur_Base_Database {
     protected function get_table_prefix(): string {
-        return 'chauffeur_vehicles';
+        return 'complete_chauffeur_vehicles';
     }
 
     protected function get_table_schema(): string {
@@ -93,5 +93,7 @@ class Chauffeur_Vehicles_Database extends Chauffeur_Base_Database {
         }
     }
 }
+
+
 
 

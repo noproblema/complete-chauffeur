@@ -199,7 +199,7 @@ function handleBookingClick(event) {
     console.log('Booking clicked:', event.schedule);
     
     // Example: Open edit screen for this booking
-    // window.location.href = `${chauffeurBookingVars.adminUrl}?page=chauffeur-bookings&action=edit&id=${event.schedule.id}`;
+    // window.location.href = `${chauffeurBookingVars.adminUrl}?page=complete-chauffeurs&action=edit&id=${event.schedule.id}`;
 }
 
 /**
@@ -253,5 +253,7 @@ function getStatusColor(status) {
     };
     return colors[status] || '#9e9e9e';
 }
+
+
 
 

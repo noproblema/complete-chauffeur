@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
  * - Booking status management
  * - Booking exports
  */
-class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
+class Complete_Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
     /**
      * @var Booking_Repository_Interface $repository Booking repository instance
      */
@@ -71,10 +71,10 @@ class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
             
             if (!empty($_POST['booking_id'])) {
                 $this->repository->update(absint($_POST['booking_id']), $data);
-                $this->add_notice(__('Booking updated successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Booking updated successfully!', 'complete-chauffeur'));
             } else {
                 $this->repository->save($data);
-                $this->add_notice(__('Booking created successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Booking created successfully!', 'complete-chauffeur'));
             }
         } catch (Exception $e) {
             $this->add_notice($e->getMessage(), 'error');
@@ -107,7 +107,7 @@ class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
             date('Y-m-d', strtotime($start_date . ' +7 days'))
         );
 
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/bookings/calendar.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/bookings/calendar.php';
     }
 
     /**
@@ -122,10 +122,10 @@ class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
         try {
             $result = $this->repository->delete($id);
             if ($result) {
-                $this->add_notice(__('Booking deleted successfully!', 'chauffeur-booking'));
+                $this->add_notice(__('Booking deleted successfully!', 'complete-chauffeur'));
                 return true;
             }
-            throw new RuntimeException(__('Failed to delete booking', 'chauffeur-booking'));
+            throw new RuntimeException(__('Failed to delete booking', 'complete-chauffeur'));
         } catch (Exception $e) {
             $this->add_notice($e->getMessage(), 'error');
             return false;
@@ -147,10 +147,10 @@ class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
         
         // CSV headers
         fputcsv($output, [
-            __('ID', 'chauffeur-booking'),
-            __('Name', 'chauffeur-booking'),
-            __('Pickup Date', 'chauffeur-booking'),
-            __('Status', 'chauffeur-booking')
+            __('ID', 'complete-chauffeur'),
+            __('Name', 'complete-chauffeur'),
+            __('Pickup Date', 'complete-chauffeur'),
+            __('Status', 'complete-chauffeur')
         ]);
         
         // Data rows
@@ -174,18 +174,18 @@ class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
     private function render_edit_form(int $id): void {
         $booking = $this->repository->find($id);
         if (!$booking) {
-            wp_die(__('Booking not found', 'chauffeur-booking'));
+            wp_die(__('Booking not found', 'complete-chauffeur'));
         }
 
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/bookings/edit.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/bookings/edit.php';
     }
 
     private function render_add_form(): void {
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/bookings/add.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/bookings/add.php';
     }
 
     private function render_list_table(): void {
-        $bookings_table = new Chauffeur_Bookings_List_Table($this->repository);
+        $bookings_table = new Complete_Chauffeur_Bookings_List_Table($this->repository);
         $bookings_table->render();
     }
 
@@ -218,7 +218,7 @@ class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
         
         // Also store in transients for page reloads
         set_transient(
-            'chauffeur_admin_notice_' . get_current_user_id(),
+            'complete_chauffeur_admin_notice_' . get_current_user_id(),
             ['message' => $message, 'type' => $type],
             45
         );
@@ -235,15 +235,17 @@ class Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
         }
         
         // Show persistent notices (from transients)
-        if ($notice = get_transient('chauffeur_admin_notice_' . get_current_user_id())) {
+        if ($notice = get_transient('complete_chauffeur_admin_notice_' . get_current_user_id())) {
             printf(
                 '<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
                 esc_attr($notice['type']),
                 esc_html($notice['message'])
             );
-            delete_transient('chauffeur_admin_notice_' . get_current_user_id());
+            delete_transient('complete_chauffeur_admin_notice_' . get_current_user_id());
         }
     }
 }
+
+
 
 

@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  * 
  * @package ChauffeurBooking
  */
-abstract class Chauffeur_Base_Database implements Database_Interface {
+abstract class Complete_Chauffeur_Base_Database implements Database_Interface {
     /**
      * @var wpdb $wpdb WordPress database abstraction
      */
@@ -265,5 +265,7 @@ abstract class Chauffeur_Base_Database implements Database_Interface {
      */
     abstract protected function sanitize_field(string $field, $value);
 }
+
+
 
 

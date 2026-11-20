@@ -11,18 +11,18 @@ if (!defined('ABSPATH')) {
  * - Availability checks
  * - Class-based lookups
  */
-class Chauffeur_Vehicle_Repository implements Vehicle_Repository_Interface {
+class Complete_Chauffeur_Vehicle_Repository implements Vehicle_Repository_Interface {
     /**
-     * @var Chauffeur_Vehicles_Database $database Reference to the database handler
+     * @var Complete_Chauffeur_Vehicles_Database $database Reference to the database handler
      */
     private $database;
 
     /**
      * Constructor - Initializes with database dependency
      * 
-     * @param Chauffeur_Vehicles_Database $database The vehicles database handler
+     * @param Complete_Chauffeur_Vehicles_Database $database The vehicles database handler
      */
-    public function __construct(Chauffeur_Vehicles_Database $database) {
+    public function __construct(Complete_Chauffeur_Vehicles_Database $database) {
         $this->database = $database;
     }
 
@@ -108,5 +108,7 @@ class Chauffeur_Vehicle_Repository implements Vehicle_Repository_Interface {
         return $this->database->delete($id);
     }
 }
+
+
 
 

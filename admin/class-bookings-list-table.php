@@ -7,7 +7,7 @@ if (!class_exists('WP_List_Table')) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
 
-class Chauffeur_Bookings_List_Table extends WP_List_Table {
+class Complete_Chauffeur_Bookings_List_Table extends WP_List_Table {
     private $repository;
     private $notices = [];
 
@@ -25,6 +25,7 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
      * Prepare items with pagination and sorting
      */
     public function prepare_items() {
+        // Define column headers
         $columns = $this->get_columns();
         $hidden = [];
         $sortable = $this->get_sortable_columns();
@@ -33,6 +34,10 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
         
         // Process bulk actions
         $this->process_bulk_action();
+        
+        $per_page = 10; // Or get from user meta/options
+        $paged    = $this->get_pagenum();
+        $offset   = ( $paged - 1 ) * $per_page;
         
         // Sorting parameters
         $orderby = $_REQUEST['orderby'] ?? 'pickup_date';
@@ -54,7 +59,7 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
 
     public function render(): void {
         $this->prepare_items();
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/bookings/list.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/bookings/list.php';
     }
 
     /**
@@ -63,14 +68,14 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
     public function get_columns() {
         return [
             'cb'            => '<input type="checkbox" />',
-            'id'            => __('ID', 'chauffeur-booking'),
-            'name'          => __('Customer', 'chauffeur-booking'),
-            'vehicle'       => __('Vehicle', 'chauffeur-booking'),
-            'pickup_date'   => __('Pickup Date', 'chauffeur-booking'),
-            'pickup_location' => __('Pickup Location', 'chauffeur-booking'),
-            'destination'   => __('Destination', 'chauffeur-booking'),
-            'price'         => __('Price', 'chauffeur-booking'),
-            'status'        => __('Status', 'chauffeur-booking')
+            'id'            => __('ID', 'complete-chauffeur'),
+            'name'          => __('Customer', 'complete-chauffeur'),
+            'vehicle'       => __('Vehicle', 'complete-chauffeur'),
+            'pickup_date'   => __('Pickup Date', 'complete-chauffeur'),
+            'pickup_location' => __('Pickup Location', 'complete-chauffeur'),
+            'destination'   => __('Destination', 'complete-chauffeur'),
+            'price'         => __('Price', 'complete-chauffeur'),
+            'status'        => __('Status', 'complete-chauffeur')
         ];
     }
 
@@ -120,34 +125,34 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
         $actions = [
             'edit' => sprintf(
                 '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s">%s</a>',
-                'chauffeur-bookings',
+                'complete-chauffeurs',
                 'edit',
                 $item->id,
                 wp_create_nonce('edit_booking_' . $item->id),
-                __('Edit', 'chauffeur-booking')
+                __('Edit', 'complete-chauffeur')
             ),
             'delete' => sprintf(
                 '<a href="%s" onclick="return confirm(\'%s\')">%s</a>',
                 wp_nonce_url(
-                    admin_url('admin.php?page=chauffeur-bookings&action=delete&id=' . $item->id),
+                    admin_url('admin.php?page=complete-chauffeurs&action=delete&id=' . $item->id),
                     'delete_booking_' . $item->id
                 ),
-                __('Are you sure you want to delete this booking?', 'chauffeur-booking'),
-                __('Delete', 'chauffeur-booking')
+                __('Are you sure you want to delete this booking?', 'complete-chauffeur'),
+                __('Delete', 'complete-chauffeur')
             ),
             'view' => sprintf(
                 '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s">%s</a>',
-                'chauffeur-bookings',
+                'complete-chauffeurs',
                 'view',
                 $item->id,
                 wp_create_nonce('view_booking_' . $item->id),
-                __('View', 'chauffeur-booking')
+                __('View', 'complete-chauffeur')
             )
         ];
         
         return sprintf(
             '<strong><a href="?page=%s&action=%s&id=%s&_wpnonce=%s">%s</a></strong>%s',
-            'chauffeur-bookings',
+            'complete-chauffeurs',
             'edit',
             $item->id,
             wp_create_nonce('edit_booking_' . $item->id),
@@ -161,11 +166,11 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
      */
     public function get_bulk_actions() {
         return [
-            'delete'        => __('Delete', 'chauffeur-booking'),
-            'export'        => __('Export', 'chauffeur-booking'),
-            'mark_confirmed' => __('Mark as Confirmed', 'chauffeur-booking'),
-            'mark_completed' => __('Mark as Completed', 'chauffeur-booking'),
-            'mark_cancelled' => __('Mark as Cancelled', 'chauffeur-booking')
+            'delete'        => __('Delete', 'complete-chauffeur'),
+            'export'        => __('Export', 'complete-chauffeur'),
+            'mark_confirmed' => __('Mark as Confirmed', 'complete-chauffeur'),
+            'mark_completed' => __('Mark as Completed', 'complete-chauffeur'),
+            'mark_cancelled' => __('Mark as Cancelled', 'complete-chauffeur')
         ];
     }
 
@@ -178,11 +183,11 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
         }
 
         // Verify nonce
-        check_admin_referer('bulk-bookings', '_wpnonce');
+        check_admin_referer('bulk-complete-chauffeurs', '_wpnonce');
 
         $ids = isset($_REQUEST['ids']) ? (array)$_REQUEST['ids'] : [];
         if (empty($ids)) {
-            $this->add_notice(__('No bookings selected.', 'chauffeur-booking'), 'error');
+            $this->add_notice(__('No bookings selected.', 'complete-chauffeur'), 'error');
             return;
         }
 
@@ -196,12 +201,12 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
                         }
                     }
                     $this->add_notice(
-                        sprintf(_n('%d booking deleted.', '%d bookings deleted.', $deleted, 'chauffeur-booking'), $deleted)
+                        sprintf(_n('%d booking deleted.', '%d bookings deleted.', $deleted, 'complete-chauffeur'), $deleted)
                     );
                     break;
 
                 case 'export':
-                    do_action('chauffeur_export_bookings', $ids);
+                    do_action('complete_chauffeur_export_bookings', $ids);
                     break;
 
                 case 'mark_confirmed':
@@ -215,7 +220,7 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
                         }
                     }
                     $this->add_notice(
-                        sprintf(__('%d bookings marked as %s.', 'chauffeur-booking'), $updated, $status)
+                        sprintf(__('%d bookings marked as %s.', 'complete-chauffeur'), $updated, $status)
                     );
                     break;
             }
@@ -230,11 +235,11 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
     protected function extra_tablenav($which) {
         if ($which === 'top') {
             $statuses = [
-                ''           => __('All Statuses', 'chauffeur-booking'),
-                'pending'    => __('Pending', 'chauffeur-booking'),
-                'confirmed'  => __('Confirmed', 'chauffeur-booking'),
-                'completed'  => __('Completed', 'chauffeur-booking'),
-                'cancelled'  => __('Cancelled', 'chauffeur-booking')
+                ''           => __('All Statuses', 'complete-chauffeur'),
+                'pending'    => __('Pending', 'complete-chauffeur'),
+                'confirmed'  => __('Confirmed', 'complete-chauffeur'),
+                'completed'  => __('Completed', 'complete-chauffeur'),
+                'cancelled'  => __('Cancelled', 'complete-chauffeur')
             ];
             
             $current_status = $_REQUEST['status'] ?? '';
@@ -249,14 +254,14 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
                 </select>
                 
                 <input type="text" name="start_date" class="datepicker" 
-                       placeholder="<?php esc_attr_e('Start Date', 'chauffeur-booking'); ?>"
+                       placeholder="<?php esc_attr_e('Start Date', 'complete-chauffeur'); ?>"
                        value="<?php echo esc_attr($_REQUEST['start_date'] ?? ''); ?>">
                 
                 <input type="text" name="end_date" class="datepicker" 
-                       placeholder="<?php esc_attr_e('End Date', 'chauffeur-booking'); ?>"
+                       placeholder="<?php esc_attr_e('End Date', 'complete-chauffeur'); ?>"
                        value="<?php echo esc_attr($_REQUEST['end_date'] ?? ''); ?>">
                 
-                <?php submit_button(__('Filter', 'chauffeur-booking'), 'button', 'filter_action', false); ?>
+                <?php submit_button(__('Filter', 'complete-chauffeur'), 'button', 'filter_action', false); ?>
             </div>
             <?php
         }
@@ -290,10 +295,10 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
      */
     private function get_status_badge($status) {
         $status_labels = [
-            'pending'    => __('Pending', 'chauffeur-booking'),
-            'confirmed'  => __('Confirmed', 'chauffeur-booking'),
-            'completed'  => __('Completed', 'chauffeur-booking'),
-            'cancelled'  => __('Cancelled', 'chauffeur-booking')
+            'pending'    => __('Pending', 'complete-chauffeur'),
+            'confirmed'  => __('Confirmed', 'complete-chauffeur'),
+            'completed'  => __('Completed', 'complete-chauffeur'),
+            'cancelled'  => __('Cancelled', 'complete-chauffeur')
         ];
         
         $status_colors = [
@@ -310,5 +315,7 @@ class Chauffeur_Bookings_List_Table extends WP_List_Table {
         );
     }
 }
+
+
 
 

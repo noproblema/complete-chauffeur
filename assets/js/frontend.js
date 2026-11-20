@@ -7,7 +7,6 @@ jQuery(document).ready(function ($) {
     const roundtripCheckbox = $('#chbo_roundtrip');
     const reverseButton = $('#reverse-route-button');
     const testButton = $('#test-button');
-debugger;
     // Function to calculate the final price
     function updatePrice() {
         const selectedRoute = routeSelect.find(':selected');
@@ -106,15 +105,19 @@ debugger;
 
                 // Submit the form via AJAX
                 const formData = new FormData(this);
+
+                // Add the required AJAX action
+                formData.append('action', 'complete_chauffeur_submit_booking');
+
+                // Add the nonce to the POST data (not the header)
+                formData.append('nonce', chauffeurBooking.nonce);
+
                 $.ajax({
-                    url: chauffeur_frontend_ajax.ajax_url,
+                    url: complete_chauffeur_frontend_ajax.ajax_url,
                     type: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
-                    headers: {
-                        'X-WP-Nonce': chauffeur_frontend_ajax.nonce, // Include the nonce for security
-                    },
                     success: function (data) {
                         // Hide the loading spinner
                         loadingSpinner.hide();
@@ -143,7 +146,6 @@ debugger;
 
     // Initialize Flatpickr for the pickup date and time field
     if ($('#chbo_pickup_date').length) {
-        debugger;
         $('#chbo_pickup_date').flatpickr({
             enableTime: true, // Enable time selection
             dateFormat: 'Y-m-d H:i', // Date and time format
@@ -155,5 +157,7 @@ debugger;
         });
     }
 });
+
+
 
 

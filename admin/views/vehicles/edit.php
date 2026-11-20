@@ -6,31 +6,31 @@ if (!defined('ABSPATH')) {
 $vehicle = $this->get_current_vehicle();
 ?>
 <div class="wrap">
-    <h1><?php echo $vehicle ? __('Edit Vehicle', 'chauffeur-booking') : __('Add New Vehicle', 'chauffeur-booking'); ?></h1>
+    <h1><?php echo $vehicle ? __('Edit Vehicle', 'complete-chauffeur') : __('Add New Vehicle', 'complete-chauffeur'); ?></h1>
     
     <?php $this->display_notices(); ?>
     
     <form method="post" class="chauffeur-admin-form" enctype="multipart/form-data">
         <input type="hidden" name="vehicle_id" value="<?php echo $vehicle ? esc_attr($vehicle->id) : ''; ?>">
         
-        <?php wp_nonce_field('vehicle_action', 'vehicle_nonce'); ?>
+        <?php wp_nonce_field('vehicle_action', 'complete_chauffeur_vehicle_nonce'); ?>
         
         <table class="form-table">
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="class"><?php esc_html_e('Vehicle Class', 'chauffeur-booking'); ?></label>
+                        <label for="class"><?php esc_html_e('Vehicle Class', 'complete-chauffeur'); ?></label>
                     </th>
                     <td>
                         <input type="text" name="class" id="class" class="regular-text" 
                                value="<?php echo $vehicle ? esc_attr($vehicle->class) : ''; ?>" required>
-                        <p class="description"><?php esc_html_e('Unique identifier (e.g., sedan, suv)', 'chauffeur-booking'); ?></p>
+                        <p class="description"><?php esc_html_e('Unique identifier (e.g., sedan, suv)', 'complete-chauffeur'); ?></p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="description"><?php esc_html_e('Description', 'chauffeur-booking'); ?></label>
+                        <label for="description"><?php esc_html_e('Description', 'complete-chauffeur'); ?></label>
                     </th>
                     <td>
                         <textarea name="description" id="description" rows="5" class="large-text"><?php 
@@ -41,7 +41,7 @@ $vehicle = $this->get_current_vehicle();
                 
                 <tr>
                     <th scope="row">
-                        <label for="capacity"><?php esc_html_e('Passenger Capacity', 'chauffeur-booking'); ?></label>
+                        <label for="capacity"><?php esc_html_e('Passenger Capacity', 'complete-chauffeur'); ?></label>
                     </th>
                     <td>
                         <input type="number" name="capacity" id="capacity" min="1" 
@@ -51,18 +51,18 @@ $vehicle = $this->get_current_vehicle();
                 
                 <tr>
                     <th scope="row">
-                        <label for="price_rate"><?php esc_html_e('Price Rate (%)', 'chauffeur-booking'); ?></label>
+                        <label for="price_rate"><?php esc_html_e('Price Rate (%)', 'complete-chauffeur'); ?></label>
                     </th>
                     <td>
                         <input type="number" name="price_rate" id="price_rate" step="0.01" min="0" 
                                value="<?php echo $vehicle ? esc_attr($vehicle->price_rate) : ''; ?>" required>
-                        <p class="description"><?php esc_html_e('Percentage applied to base route price', 'chauffeur-booking'); ?></p>
+                        <p class="description"><?php esc_html_e('Percentage applied to base route price', 'complete-chauffeur'); ?></p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="image_url"><?php esc_html_e('Vehicle Image', 'chauffeur-booking'); ?></label>
+                        <label for="image_url"><?php esc_html_e('Vehicle Image', 'complete-chauffeur'); ?></label>
                     </th>
                     <td>
                         <?php if ($vehicle && $vehicle->image_url): ?>
@@ -71,14 +71,14 @@ $vehicle = $this->get_current_vehicle();
                         <input type="text" name="image_url" id="image_url" class="regular-text" 
                                value="<?php echo $vehicle ? esc_attr($vehicle->image_url) : ''; ?>">
                         <button type="button" class="button chauffeur-media-upload" data-target="image_url">
-                            <?php esc_html_e('Upload Image', 'chauffeur-booking'); ?>
+                            <?php esc_html_e('Upload Image', 'complete-chauffeur'); ?>
                         </button>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="is_available"><?php esc_html_e('Available for Bookings', 'chauffeur-booking'); ?></label>
+                        <label for="is_available"><?php esc_html_e('Available for Bookings', 'complete-chauffeur'); ?></label>
                     </th>
                     <td>
                         <input type="checkbox" name="is_available" id="is_available" value="1" 
@@ -88,7 +88,7 @@ $vehicle = $this->get_current_vehicle();
             </tbody>
         </table>
         
-        <?php submit_button(__('Save Vehicle', 'chauffeur-booking')); ?>
+        <?php submit_button(__('Save Vehicle', 'complete-chauffeur')); ?>
     </form>
 </div>
 
@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var target = $(this).data('target');
         var frame = wp.media({
-            title: '<?php esc_html_e('Select Vehicle Image', 'chauffeur-booking'); ?>',
+            title: '<?php esc_html_e('Select Vehicle Image', 'complete-chauffeur'); ?>',
             multiple: false
         });
         
@@ -112,5 +112,7 @@ jQuery(document).ready(function($) {
     });
 });
 </script>
+
+
 
 

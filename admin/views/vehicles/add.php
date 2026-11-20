@@ -4,22 +4,22 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="wrap">
-    <h1><?php esc_html_e('Add New Vehicle', 'chauffeur-booking'); ?></h1>
+    <h1><?php esc_html_e('Add New Vehicle', 'complete-chauffeur'); ?></h1>
     
     <?php $this->display_notices(); ?>
     
     <form method="post" class="chauffeur-admin-form" enctype="multipart/form-data">
-        <?php wp_nonce_field('vehicle_action', 'vehicle_nonce'); ?>
+        <?php wp_nonce_field('vehicle_action', 'complete_chauffeur_vehicle_nonce'); ?>
         
         <table class="form-table">
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="class"><?php esc_html_e('Vehicle Class', 'chauffeur-booking'); ?></label>
+                        <label for="class"><?php esc_html_e('Vehicle Class', 'complete-chauffeur'); ?></label>
                     </th>
                     <td>
                         <input type="text" name="class" id="class" class="regular-text" required>
-                        <p class="description"><?php esc_html_e('Unique identifier (e.g., sedan, suv)', 'chauffeur-booking'); ?></p>
+                        <p class="description"><?php esc_html_e('Unique identifier (e.g., sedan, suv)', 'complete-chauffeur'); ?></p>
                     </td>
                 </tr>
                 
@@ -28,7 +28,7 @@ if (!defined('ABSPATH')) {
             </tbody>
         </table>
         
-        <?php submit_button(__('Add Vehicle', 'chauffeur-booking')); ?>
+        <?php submit_button(__('Add Vehicle', 'complete-chauffeur')); ?>
     </form>
 </div>
 
@@ -39,7 +39,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var target = $(this).data('target');
         var frame = wp.media({
-            title: '<?php esc_html_e('Select Vehicle Image', 'chauffeur-booking'); ?>',
+            title: '<?php esc_html_e('Select Vehicle Image', 'complete-chauffeur'); ?>',
             multiple: false
         });
         
@@ -52,5 +52,7 @@ jQuery(document).ready(function($) {
     });
 });
 </script>
+
+
 
 
