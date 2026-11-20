@@ -3,8 +3,8 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class Chauffeur_Autoloader {
-    const CACHE_KEY = 'chauffeur_autoload_classmap';
+class Complete_Chauffeur_Autoloader {
+    const CACHE_KEY = 'complete_chauffeur_autoload_classmap';
     const CACHE_EXPIRE = WEEK_IN_SECONDS; // 1 week cache
     
     /**
@@ -18,8 +18,13 @@ class Chauffeur_Autoloader {
      * Load a class using cached classmap or generate on the fly
      */
     public static function load_class(string $class): void {
+        // Only handle plugin classes
+        if (strpos($class, 'Complete_Chauffeur_') !== 0) {
+            return;
+        }
+
         static $classmap = null;
-        
+
         // Initialize classmap if not loaded
         if ($classmap === null) {
             $classmap = self::get_cached_classmap();
@@ -60,21 +65,14 @@ class Chauffeur_Autoloader {
      */
     private static function generate_classmap(): array {
         $classmap = [];
-        $base_dir = CHAUFFEUR_BOOKING_PATH . 'includes/';
-        
-        // Directories to scan (matches your structure)
+
+        // Directories to scan (absolute paths; RecursiveIteratorIterator recurses into subdirectories)
         $scan_dirs = [
-            '',
-            'database/',
-            'repositories/',
-            'services/',
-            'interfaces/',
-            'admin/'
+            COMPLETE_CHAUFFEUR_PATH . 'includes/',
+            COMPLETE_CHAUFFEUR_PATH . 'admin/',
         ];
-        
-        foreach ($scan_dirs as $dir) {
-            $path = $base_dir . $dir;
-            
+
+        foreach ($scan_dirs as $path) {
             if (!is_dir($path)) {
                 continue;
             }
@@ -119,17 +117,18 @@ class Chauffeur_Autoloader {
      * Locate class file using naming conventions
      */
     private static function locate_class_file(string $class): ?string {
-        // Convert class name to filename
-        $filename = 'class-' . strtolower(str_replace('_', '-', $class)) . '.php';
+        // Convert class name to filename (strip plugin prefix, then underscores to dashes)
+        $relative = preg_replace('/^Complete_Chauffeur_/', '', $class);
+        $filename = 'class-' . strtolower(str_replace('_', '-', $relative)) . '.php';
         
         // Possible locations (matches your structure)
         $locations = [
-            CHAUFFEUR_BOOKING_PATH . 'includes/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/database/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/repositories/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/services/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/interfaces/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'admin/' . $filename
+            COMPLETE_CHAUFFEUR_PATH . 'includes/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/database/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/repositories/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/services/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/interfaces/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'admin/' . $filename
         ];
         
         foreach ($locations as $path) {
@@ -163,5 +162,7 @@ class Chauffeur_Autoloader {
         self::generate_classmap();
     }
 }
+
+
 
 

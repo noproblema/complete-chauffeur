@@ -3,10 +3,10 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class Chauffeur_Autoloader_Debug {
-    const CACHE_KEY = 'chauffeur_classmap';
+class Complete_Chauffeur_Autoloader_Debug {
+    const CACHE_KEY = 'complete_chauffeur_classmap';
     const CACHE_EXPIRE = WEEK_IN_SECONDS;
-    const DEBUG_FILE = CHAUFFEUR_BOOKING_PATH . 'autoloader-debug.log';
+    const DEBUG_FILE = COMPLETE_CHAUFFEUR_PATH . 'autoloader-debug.log';
     
     /**
      * Register the autoloader with caching support
@@ -20,6 +20,11 @@ class Chauffeur_Autoloader_Debug {
      * Load class using cached classmap or generate new one
      */
     public static function load_class(string $class): void {
+        // Only handle plugin classes
+        if (strpos($class, 'Complete_Chauffeur_') !== 0) {
+            return;
+        }
+
         self::log_debug("Attempting to load class: " . $class);
         
         $classmap = self::get_classmap();
@@ -73,22 +78,16 @@ class Chauffeur_Autoloader_Debug {
      */
     private static function generate_classmap(): array {
         $classmap = [];
-        $base_path = CHAUFFEUR_BOOKING_PATH . 'includes/';
-        
-        // Define scanning directories
+
+        // Define scanning directories (absolute paths; RecursiveIteratorIterator recurses into subdirectories)
         $directories = [
-            '',
-            'database/',
-            'repositories/',
-            'services/',
-            'interfaces/',
-            'admin/'
+            COMPLETE_CHAUFFEUR_PATH . 'includes/',
+            COMPLETE_CHAUFFEUR_PATH . 'admin/',
         ];
-        
-        self::log_debug("Starting directory scan in: " . $base_path);
-        
-        foreach ($directories as $dir) {
-            $path = $base_path . $dir;
+
+        self::log_debug("Starting directory scan");
+
+        foreach ($directories as $path) {
             if (!is_dir($path)) {
                 self::log_debug("Directory not found: " . $path);
                 continue;
@@ -123,18 +122,19 @@ class Chauffeur_Autoloader_Debug {
      * Locate class file using naming conventions
      */
     private static function locate_class_file(string $class): ?string {
-        // Convert class name to filename
-        $relative = str_replace(['Chauffeur_', '_'], ['', '-'], $class);
+        // Convert class name to filename (strip plugin prefix, then underscores to dashes)
+        $relative = preg_replace('/^Complete_Chauffeur_/', '', $class);
+        $relative = str_replace('_', '-', $relative);
         $filename = 'class-' . strtolower($relative) . '.php';
         
         // Possible locations (matches your structure)
         $locations = [
-            CHAUFFEUR_BOOKING_PATH . 'includes/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/database/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/repositories/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/services/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'includes/interfaces/' . $filename,
-            CHAUFFEUR_BOOKING_PATH . 'admin/' . $filename
+            COMPLETE_CHAUFFEUR_PATH . 'includes/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/database/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/repositories/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/services/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'includes/interfaces/' . $filename,
+            COMPLETE_CHAUFFEUR_PATH . 'admin/' . $filename
         ];
         
         self::log_debug("Looking for class {$class} as {$filename}");
@@ -226,10 +226,12 @@ class Chauffeur_Autoloader_Debug {
         $output .= print_r($cache, true);
         
         file_put_contents(
-            CHAUFFEUR_BOOKING_PATH . 'autoloader-cache-dump.txt',
+            COMPLETE_CHAUFFEUR_PATH . 'autoloader-cache-dump.txt',
             $output
         );
     }
 }
+
+
 
 

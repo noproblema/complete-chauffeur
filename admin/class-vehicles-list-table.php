@@ -3,10 +3,14 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+if (!class_exists('WP_List_Table')) {
+    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
+
 /**
  * Custom WP_List_Table implementation for Vehicles
  */
-class Chauffeur_Vehicles_List_Table extends WP_List_Table {
+class Complete_Chauffeur_Vehicles_List_Table extends WP_List_Table {
     private $repository;
 
     public function __construct(Vehicle_Repository_Interface $repository) {
@@ -19,14 +23,23 @@ class Chauffeur_Vehicles_List_Table extends WP_List_Table {
         $this->repository = $repository;
     }
 
+    /**
+     * Prepare items with pagination and sorting
+     */
     public function prepare_items() {
-        $this->_column_headers = [
-            $this->get_columns(),
-            [],
-            $this->get_sortable_columns()
-        ];
+        // Define column headers
+        $columns = $this->get_columns();
+        $hidden = [];
+        $sortable = $this->get_sortable_columns();
         
+        $this->_column_headers = [$columns, $hidden, $sortable];
+        
+        // Process bulk actions
         $this->process_bulk_action();
+        
+        $per_page = 10; // Or get from user meta/options
+        $paged    = $this->get_pagenum();
+        $offset   = ( $paged - 1 ) * $per_page;
         
         $args = [
             'limit'   => $per_page,
@@ -39,16 +52,19 @@ class Chauffeur_Vehicles_List_Table extends WP_List_Table {
 
     public function render(): void {
         $this->prepare_items();
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/vehicles/list.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/vehicles/list.php';
     }
 
+    /**
+     * Define columns
+     */
     public function get_columns() {
         return [
             'cb'        => '<input type="checkbox" />',
-            'class'     => __('Class', 'chauffeur-booking'),
-            'capacity'  => __('Capacity', 'chauffeur-booking'),
-            'price_rate' => __('Price Rate', 'chauffeur-booking'),
-            'is_available' => __('Available', 'chauffeur-booking')
+            'class'     => __('Class', 'complete-chauffeur'),
+            'capacity'  => __('Capacity', 'complete-chauffeur'),
+            'price_rate' => __('Price Rate', 'complete-chauffeur'),
+            'is_available' => __('Available', 'complete-chauffeur')
         ];
     }
 
@@ -85,29 +101,29 @@ class Chauffeur_Vehicles_List_Table extends WP_List_Table {
         $actions = [
             'edit'   => sprintf(
                 '<a href="?page=%s&action=%s&id=%s">%s</a>',
-                'chauffeur-vehicles',
+                'complete-chauffeur-vehicles',
                 'edit',
                 $item->id,
-                __('Edit', 'chauffeur-booking')
+                __('Edit', 'complete-chauffeur')
             ),
             'delete' => sprintf(
                 '<a href="%s" onclick="return confirm(\'%s\')">%s</a>',
                 wp_nonce_url(
                     add_query_arg([
-                        'page'   => 'chauffeur-vehicles',
+                        'page'   => 'complete-chauffeur-vehicles',
                         'action' => 'delete',
                         'id'     => $item->id
                     ], admin_url('admin.php')),
                     'delete_vehicle_' . $item->id
                 ),
-                __('Are you sure?', 'chauffeur-booking'),
-                __('Delete', 'chauffeur-booking')
+                __('Are you sure?', 'complete-chauffeur'),
+                __('Delete', 'complete-chauffeur')
             ),
             'toggle' => sprintf(
                 '<a href="%s">%s</a>',
                 wp_nonce_url(
                     add_query_arg([
-                        'page'   => 'chauffeur-vehicles',
+                        'page'   => 'complete-chauffeur-vehicles',
                         'action' => 'toggle',
                         'id'     => $item->id,
                         'available' => $item->is_available ? 0 : 1
@@ -115,14 +131,14 @@ class Chauffeur_Vehicles_List_Table extends WP_List_Table {
                     'toggle_availability_' . $item->id
                 ),
                 $item->is_available 
-                    ? __('Mark Unavailable', 'chauffeur-booking')
-                    : __('Mark Available', 'chauffeur-booking')
+                    ? __('Mark Unavailable', 'complete-chauffeur')
+                    : __('Mark Available', 'complete-chauffeur')
             )
         ];
         
         return sprintf(
             '<strong><a href="?page=%s&action=%s&id=%s">%s</a></strong>%s',
-            'chauffeur-vehicles',
+            'complete-chauffeur-vehicles',
             'edit',
             $item->id,
             $item->class,
@@ -132,10 +148,10 @@ class Chauffeur_Vehicles_List_Table extends WP_List_Table {
 
     public function get_bulk_actions() {
         return [
-            'delete' => __('Delete', 'chauffeur-booking'),
-            'export' => __('Export', 'chauffeur-booking'),
-            'make_available' => __('Mark Available', 'chauffeur-booking'),
-            'make_unavailable' => __('Mark Unavailable', 'chauffeur-booking')
+            'delete' => __('Delete', 'complete-chauffeur'),
+            'export' => __('Export', 'complete-chauffeur'),
+            'make_available' => __('Mark Available', 'complete-chauffeur'),
+            'make_unavailable' => __('Mark Unavailable', 'complete-chauffeur')
         ];
     }
 
@@ -154,7 +170,7 @@ class Chauffeur_Vehicles_List_Table extends WP_List_Table {
                 }
                 break;
             case 'export':
-                do_action('chauffeur_export_vehicles', $ids);
+                do_action('complete_chauffeur_export_vehicles', $ids);
                 break;
             case 'make_available':
                 foreach ($ids as $id) {
@@ -169,5 +185,7 @@ class Chauffeur_Vehicles_List_Table extends WP_List_Table {
         }
     }
 }
+
+
 
 

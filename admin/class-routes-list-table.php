@@ -3,10 +3,14 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+if (!class_exists('WP_List_Table')) {
+    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
+
 /**
  * Custom WP_List_Table implementation for Routes
  */
-class Chauffeur_Routes_List_Table extends WP_List_Table {
+class Complete_Chauffeur_Routes_List_Table extends WP_List_Table {
     private $repository;
 
     public function __construct(Route_Repository_Interface $repository) {
@@ -24,13 +28,13 @@ class Chauffeur_Routes_List_Table extends WP_List_Table {
      */
     public function prepare_items() {
         // Define column headers
-        $this->_column_headers = [
-            $this->get_columns(),     // Columns
-            [],                       // Hidden columns
-            $this->get_sortable_columns() // Sortable columns
-        ];
+        $columns = $this->get_columns();
+        $hidden = [];
+        $sortable = $this->get_sortable_columns();
         
-        // Handle bulk actions
+        $this->_column_headers = [$columns, $hidden, $sortable];
+        
+        // Process bulk actions
         $this->process_bulk_action();
         
         // Get filtered/sorted data from repository
@@ -47,7 +51,7 @@ class Chauffeur_Routes_List_Table extends WP_List_Table {
 
     public function render(): void {
         $this->prepare_items();
-        include CHAUFFEUR_BOOKING_PATH . 'admin/views/routes/list.php';
+        include COMPLETE_CHAUFFEUR_PATH . 'admin/views/routes/list.php';
     }
         
     /**
@@ -56,12 +60,12 @@ class Chauffeur_Routes_List_Table extends WP_List_Table {
     public function get_columns() {
         return [
             'cb'           => '<input type="checkbox" />',
-            'route_name'   => __('Route Name', 'chauffeur-booking'),
-            'start_location' => __('Start Location', 'chauffeur-booking'),
-            'end_location' => __('End Location', 'chauffeur-booking'),
-            'distance'    => __('Distance (km)', 'chauffeur-booking'),
-            'price'       => __('Price', 'chauffeur-booking'),
-            'is_active'   => __('Active', 'chauffeur-booking')
+            'route_name'   => __('Route Name', 'complete-chauffeur'),
+            'start_location' => __('Start Location', 'complete-chauffeur'),
+            'end_location' => __('End Location', 'complete-chauffeur'),
+            'distance'    => __('Distance (km)', 'complete-chauffeur'),
+            'price'       => __('Price', 'complete-chauffeur'),
+            'is_active'   => __('Active', 'complete-chauffeur')
         ];
     }
 
@@ -113,29 +117,29 @@ class Chauffeur_Routes_List_Table extends WP_List_Table {
         $actions = [
             'edit'   => sprintf(
                 '<a href="?page=%s&action=%s&id=%s">%s</a>',
-                'chauffeur-routes',
+                'complete-chauffeur-routes',
                 'edit',
                 $item->id,
-                __('Edit', 'chauffeur-booking')
+                __('Edit', 'complete-chauffeur')
             ),
             'delete' => sprintf(
                 '<a href="%s" onclick="return confirm(\'%s\')">%s</a>',
                 wp_nonce_url(
                     add_query_arg([
-                        'page'   => 'chauffeur-routes',
+                        'page'   => 'complete-chauffeur-routes',
                         'action' => 'delete',
                         'id'     => $item->id
                     ], admin_url('admin.php')),
                     'delete_route_' . $item->id
                 ),
-                __('Are you sure?', 'chauffeur-booking'),
-                __('Delete', 'chauffeur-booking')
+                __('Are you sure?', 'complete-chauffeur'),
+                __('Delete', 'complete-chauffeur')
             )
         ];
         
         return sprintf(
             '<strong><a href="?page=%s&action=%s&id=%s">%s</a></strong>%s',
-            'chauffeur-routes',
+            'complete-chauffeur-routes',
             'edit',
             $item->id,
             $item->route_name,
@@ -148,8 +152,8 @@ class Chauffeur_Routes_List_Table extends WP_List_Table {
      */
     public function get_bulk_actions() {
         return [
-            'delete' => __('Delete', 'chauffeur-booking'),
-            'export' => __('Export', 'chauffeur-booking')
+            'delete' => __('Delete', 'complete-chauffeur'),
+            'export' => __('Export', 'complete-chauffeur')
         ];
     }
 
@@ -181,8 +185,10 @@ class Chauffeur_Routes_List_Table extends WP_List_Table {
      */
     private function export_routes(array $ids) {
         // Implementation moved to Routes_Admin_Interface
-        do_action('chauffeur_export_routes', $ids);
+        do_action('complete_chauffeur_export_routes', $ids);
     }
 }
+
+
 
 
