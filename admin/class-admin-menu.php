@@ -67,7 +67,11 @@ class Complete_Chauffeur_Admin_Menu {
     }
 
     public function handle_global_actions() {
-        // Handle bulk actions across admin pages
+        // Only handle bulk actions on this plugin's admin pages
+        if (empty($_REQUEST['page']) || strpos($_REQUEST['page'], 'complete-chauffeur') !== 0) {
+            return;
+        }
+
         if (isset($_REQUEST['action']) && current_user_can('manage_complete_chauffeur_bookings')) {
             $this->handle_bulk_actions();
         }

@@ -28,9 +28,11 @@ return function (Complete_Chauffeur_Container $container) {
     });
 
     // Admin
-    $container->set('Bookings_Admin_Interface', function($c) { 
+    $container->set('Bookings_Admin_Interface', function($c) {
         return new Complete_Chauffeur_Bookings_Admin(
-            $c->get('Booking_Repository_Interface')
+            $c->get('Booking_Repository_Interface'),
+            $c->get('Route_Repository_Interface'),
+            $c->get('Vehicle_Repository_Interface')
         );
     });
 

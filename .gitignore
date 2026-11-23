@@ -45,3 +45,4 @@ concatenated_plugin*.txt
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,vim
 
+deploy-plugin.sh

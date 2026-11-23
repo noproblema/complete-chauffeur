@@ -39,6 +39,22 @@ class Complete_Chauffeur_Admin_Assets {
             true
         );
 
+        // Third-party TUI Date Picker library (required by calendar view)
+        wp_register_style(
+            'tui-date-picker-css',
+            COMPLETE_CHAUFFEUR_URL . 'assets/css/tui-date-picker.min.css',
+            [],
+            COMPLETE_CHAUFFEUR_VERSION
+        );
+
+        wp_register_script(
+            'tui-date-picker',
+            COMPLETE_CHAUFFEUR_URL . 'assets/js/tui-date-picker.min.js',
+            ['jquery'],
+            COMPLETE_CHAUFFEUR_VERSION,
+            true
+        );
+
         // Plugin-specific admin styles
         wp_register_style(
             'admin-calendar-css',
@@ -50,14 +66,16 @@ class Complete_Chauffeur_Admin_Assets {
         wp_register_script(
             'admin-calendar',
             COMPLETE_CHAUFFEUR_URL . 'admin/assets/js/admin-calendar.js',
-            ['jquery', 'tui-calendar'],
+            ['jquery', 'tui-calendar', 'tui-date-picker'],
             COMPLETE_CHAUFFEUR_VERSION,
             true
         );
 
         wp_enqueue_style('tui-calendar-css');
+        wp_enqueue_style('tui-date-picker-css');
         wp_enqueue_style('admin-calendar-css');
         wp_enqueue_script('tui-calendar');
+        wp_enqueue_script('tui-date-picker');
         wp_enqueue_script('admin-calendar');
     }
 

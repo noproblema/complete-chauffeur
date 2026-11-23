@@ -20,11 +20,6 @@ class Complete_Chauffeur_Autoloader_Debug {
      * Load class using cached classmap or generate new one
      */
     public static function load_class(string $class): void {
-        // Only handle plugin classes
-        if (strpos($class, 'Complete_Chauffeur_') !== 0) {
-            return;
-        }
-
         self::log_debug("Attempting to load class: " . $class);
         
         $classmap = self::get_classmap();

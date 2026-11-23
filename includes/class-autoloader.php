@@ -18,11 +18,6 @@ class Complete_Chauffeur_Autoloader {
      * Load a class using cached classmap or generate on the fly
      */
     public static function load_class(string $class): void {
-        // Only handle plugin classes
-        if (strpos($class, 'Complete_Chauffeur_') !== 0) {
-            return;
-        }
-
         static $classmap = null;
 
         // Initialize classmap if not loaded

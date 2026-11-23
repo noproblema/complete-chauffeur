@@ -19,6 +19,16 @@ class Complete_Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
     private $repository;
 
     /**
+     * @var Route_Repository_Interface $route_repository Route repository instance
+     */
+    private $route_repository;
+
+    /**
+     * @var Vehicle_Repository_Interface $vehicle_repository Vehicle repository instance
+     */
+    private $vehicle_repository;
+
+    /**
      * @var array $notices Admin notices to display
      */
     private $notices = [];
@@ -27,9 +37,17 @@ class Complete_Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
      * Constructor
      *
      * @param Booking_Repository_Interface $repository Booking repository instance
+     * @param Route_Repository_Interface $route_repository Route repository instance
+     * @param Vehicle_Repository_Interface $vehicle_repository Vehicle repository instance
      */
-    public function __construct(Booking_Repository_Interface $repository) {
+    public function __construct(
+        Booking_Repository_Interface $repository,
+        Route_Repository_Interface $route_repository,
+        Vehicle_Repository_Interface $vehicle_repository
+    ) {
         $this->repository = $repository;
+        $this->route_repository = $route_repository;
+        $this->vehicle_repository = $vehicle_repository;
         add_action('admin_init', [$this, 'handle_form_submission']);
         add_action('admin_notices', [$this, 'admin_notices']);
     }
@@ -62,9 +80,9 @@ class Complete_Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
      * Handle booking form submissions (create/update)
      */
     public function handle_form_submission(): void {
-        if (!isset($_POST['booking_nonce'])) return;
-        
-        check_admin_referer('booking_action', 'booking_nonce');
+        if (!isset($_POST['complete_chauffeur_booking_nonce'])) return;
+
+        check_admin_referer('booking_action', 'complete_chauffeur_booking_nonce');
 
         try {
             $data = $this->sanitize_booking_data($_POST);
@@ -168,6 +186,37 @@ class Complete_Chauffeur_Bookings_Admin implements Bookings_Admin_Interface {
         
         fclose($output);
         exit;
+    }
+
+    /**
+     * Get the currently edited booking
+     *
+     * @return object|null Booking object or null
+     */
+    public function get_current_booking(): ?object {
+        $id = $_GET['id'] ?? 0;
+        if (!$id) {
+            return null;
+        }
+        return $this->repository->find(absint($id));
+    }
+
+    /**
+     * Get all routes for dropdowns
+     *
+     * @return array List of route objects
+     */
+    public function get_routes(): array {
+        return $this->route_repository->get_all();
+    }
+
+    /**
+     * Get all vehicles for dropdowns
+     *
+     * @return array List of vehicle objects
+     */
+    public function get_vehicles(): array {
+        return $this->vehicle_repository->get_all();
     }
 
     // Private helper methods
