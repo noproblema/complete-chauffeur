@@ -113,7 +113,7 @@ jQuery(document).ready(function ($) {
                 formData.append('nonce', chauffeurBooking.nonce);
 
                 $.ajax({
-                    url: complete_chauffeur_frontend_ajax.ajax_url,
+                    url: chauffeurBooking.ajax_url,
                     type: 'POST',
                     data: formData,
                     processData: false,

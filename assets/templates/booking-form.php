@@ -70,7 +70,7 @@ if (!defined('ABSPATH')) {
         <!-- Pickup date and time -->
         <div class="flatpickr input-group" data-wrap="true">
             <label for="chbo_pickup_date"><?php echo esc_html__('Pickup Date & Time:', 'complete-chauffeur'); ?></label>
-            <input id="chbo_pickup_date" data-input>
+            <input type="text" name="chbo_pickup_date" id="chbo_pickup_date" data-input>
 
             <a class="input-btn" title="toggle" data-toggle>
                 <i class="icon-calendar"></i>

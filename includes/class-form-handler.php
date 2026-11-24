@@ -122,7 +122,7 @@ class Complete_Chauffeur_Form_Handler implements Form_Handler_Interface {
         wp_enqueue_script(
             'complete-chauffeur-form',
             COMPLETE_CHAUFFEUR_URL . 'assets/js/frontend.js',
-            ['jquery', 'flatpickr-js'],
+            ['jquery', 'flatpickr-js', 'sweetalert2-js'],
             COMPLETE_CHAUFFEUR_VERSION,
             true
         );
@@ -140,6 +140,22 @@ class Complete_Chauffeur_Form_Handler implements Form_Handler_Interface {
             COMPLETE_CHAUFFEUR_URL . 'assets/js/flatpickr.min.js',
             ['jquery'], // Dependencies (jQuery)
             '4.6.9',
+            true
+        );
+
+        // Enqueue SweetAlert2 for confirmation modals
+        wp_enqueue_style(
+            'sweetalert2-css',
+            COMPLETE_CHAUFFEUR_URL . 'assets/css/sweetalert2.min.css',
+            [],
+            '11.10.0'
+        );
+
+        wp_enqueue_script(
+            'sweetalert2-js',
+            COMPLETE_CHAUFFEUR_URL . 'assets/js/sweetalert2.min.js',
+            [],
+            '11.10.0',
             true
         );
 
